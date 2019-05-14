@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -8,29 +8,29 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _propTypes = require('prop-types');
+var _propTypes = require("prop-types");
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _url = require('url');
+var _url = require("url");
 
 var _url2 = _interopRequireDefault(_url);
 
-var _es6Promise = require('es6-promise');
+var _es6Promise = require("es6-promise");
 
-var _shallowequal = require('shallowequal');
+var _shallowequal = require("shallowequal");
 
 var _shallowequal2 = _interopRequireDefault(_shallowequal);
 
-var _tokenizeUrl = require('./tokenizeUrl');
+var _tokenizeUrl = require("./tokenizeUrl");
 
 var _tokenizeUrl2 = _interopRequireDefault(_tokenizeUrl);
 
-var _tableauApi = require('tableau-api');
+var _tableauApi = require("tableau-api");
 
 var _tableauApi2 = _interopRequireDefault(_tableauApi);
 
@@ -57,7 +57,7 @@ var defaultProps = {
   parameters: {},
   filters: {},
   options: {},
-  query: '?:embed=yes&:comments=no&:toolbar=yes&:refresh=yes'
+  query: "?:embed=yes&:comments=no&:toolbar=yes&:refresh=yes"
 };
 
 var TableauReport = function (_React$Component) {
@@ -76,38 +76,45 @@ var TableauReport = function (_React$Component) {
   }
 
   _createClass(TableauReport, [{
-    key: 'componentDidMount',
+    key: "componentDidMount",
     value: function componentDidMount() {
       this.initTableau();
     }
   }, {
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      var isReportChanged = nextProps.url !== this.props.url;
-      var isFiltersChanged = !(0, _shallowequal2.default)(this.props.filters, nextProps.filters, this.compareArrays);
-      var isParametersChanged = !(0, _shallowequal2.default)(this.props.parameters, nextProps.parameters);
-      var isLoading = this.state.loading;
-
-      // Only report is changed - re-initialize
-      if (isReportChanged) {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState) {
+      if (prevProps.url !== this.props.url) {
+        this.forceUpdate();
         this.initTableau();
       }
-
-      // Only filters are changed, apply via the API
-      if (!isReportChanged && isFiltersChanged && !isLoading) {
-        this.applyFilters(nextProps.filters);
-      }
-
-      // Only parameters are changed, apply via the API
-      if (!isReportChanged && isParametersChanged && !isLoading) {
-        this.applyParameters(nextProps.parameters);
-      }
-
-      // token change, validate it.
-      if (nextProps.token !== this.props.token) {
-        this.setState({ didInvalidateToken: false });
-      }
     }
+
+    // componentWillReceiveProps(nextProps) {
+    //   const isReportChanged = nextProps.url !== this.props.url;
+    //   const isFiltersChanged = !shallowequal(this.props.filters, nextProps.filters, this.compareArrays);
+    //   const isParametersChanged = !shallowequal(this.props.parameters, nextProps.parameters);
+    //   const isLoading = this.state.loading;
+
+    //   // Only report is changed - re-initialize
+    //   if (isReportChanged) {
+    //     this.initTableau();
+    //   }
+
+    //   // Only filters are changed, apply via the API
+    //   if (!isReportChanged && isFiltersChanged && !isLoading) {
+    //     this.applyFilters(nextProps.filters);
+    //   }
+
+    //   // Only parameters are changed, apply via the API
+    //   if (!isReportChanged && isParametersChanged && !isLoading) {
+    //     this.applyParameters(nextProps.parameters);
+    //   }
+
+    //   // token change, validate it.
+    //   if (nextProps.token !== this.props.token) {
+    //     this.setState({ didInvalidateToken: false });
+    //   }
+    // }
 
     /**
      * Compares the values of filters to see if they are the same.
@@ -117,7 +124,7 @@ var TableauReport = function (_React$Component) {
      */
 
   }, {
-    key: 'compareArrays',
+    key: "compareArrays",
     value: function compareArrays(a, b) {
       if (Array.isArray(a) && Array.isArray(b)) {
         return a.sort().toString() === b.sort().toString();
@@ -132,7 +139,7 @@ var TableauReport = function (_React$Component) {
      */
 
   }, {
-    key: 'onComplete',
+    key: "onComplete",
     value: function onComplete(promises, cb) {
       _es6Promise.Promise.all(promises).then(function () {
         return cb();
@@ -147,7 +154,7 @@ var TableauReport = function (_React$Component) {
      */
 
   }, {
-    key: 'getUrl',
+    key: "getUrl",
     value: function getUrl() {
       var _props = this.props,
           token = _props.token,
@@ -160,10 +167,10 @@ var TableauReport = function (_React$Component) {
         return (0, _tokenizeUrl2.default)(this.props.url, token) + query;
       }
 
-      return parsed.protocol + '//' + parsed.host + parsed.pathname + query;
+      return parsed.protocol + "//" + parsed.host + parsed.pathname + query;
     }
   }, {
-    key: 'invalidateToken',
+    key: "invalidateToken",
     value: function invalidateToken() {
       this.setState({ didInvalidateToken: true });
     }
@@ -176,7 +183,7 @@ var TableauReport = function (_React$Component) {
      */
 
   }, {
-    key: 'applyFilters',
+    key: "applyFilters",
     value: function applyFilters(filters) {
       var _this2 = this;
 
@@ -196,7 +203,7 @@ var TableauReport = function (_React$Component) {
       });
     }
   }, {
-    key: 'applyParameters',
+    key: "applyParameters",
     value: function applyParameters(parameters) {
       var _this3 = this;
 
@@ -223,7 +230,7 @@ var TableauReport = function (_React$Component) {
      */
 
   }, {
-    key: 'initTableau',
+    key: "initTableau",
     value: function initTableau() {
       var _this4 = this;
 
@@ -252,13 +259,20 @@ var TableauReport = function (_React$Component) {
       this.viz = new _tableauApi2.default.Viz(this.container, vizUrl, options);
     }
   }, {
-    key: 'render',
+    key: "render",
     value: function render() {
       var _this5 = this;
 
-      return _react2.default.createElement('div', { ref: function ref(c) {
+      return _react2.default.createElement("div", { ref: function ref(c) {
           return _this5.container = c;
         } });
+    }
+  }], [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(nextProps, prevState) {
+      if (nextProps.url !== prevState.currentUrl) {
+        return { currentUrl: nextProps.currentUrl };
+      } else return null;
     }
   }]);
 
@@ -269,4 +283,4 @@ TableauReport.propTypes = propTypes;
 TableauReport.defaultProps = defaultProps;
 
 exports.default = TableauReport;
-module.exports = exports['default'];
+module.exports = exports["default"];

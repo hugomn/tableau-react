@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import url from 'url';
-import { Promise } from 'es6-promise';
-import shallowequal from 'shallowequal';
-import tokenizeUrl from './tokenizeUrl';
-import Tableau from 'tableau-api';
+import React from "react";
+import PropTypes from "prop-types";
+import url from "url";
+import { Promise } from "es6-promise";
+import shallowequal from "shallowequal";
+import tokenizeUrl from "./tokenizeUrl";
+import Tableau from "tableau-api";
 
 const propTypes = {
   filters: PropTypes.object,
@@ -13,7 +13,7 @@ const propTypes = {
   options: PropTypes.object,
   token: PropTypes.string,
   onLoad: PropTypes.func,
-  query: PropTypes.string,
+  query: PropTypes.string
 };
 
 const defaultProps = {
@@ -21,7 +21,7 @@ const defaultProps = {
   parameters: {},
   filters: {},
   options: {},
-  query: '?:embed=yes&:comments=no&:toolbar=yes&:refresh=yes'
+  query: "?:embed=yes&:comments=no&:toolbar=yes&:refresh=yes"
 };
 
 class TableauReport extends React.Component {
@@ -38,32 +38,45 @@ class TableauReport extends React.Component {
     this.initTableau();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const isReportChanged = nextProps.url !== this.props.url;
-    const isFiltersChanged = !shallowequal(this.props.filters, nextProps.filters, this.compareArrays);
-    const isParametersChanged = !shallowequal(this.props.parameters, nextProps.parameters);
-    const isLoading = this.state.loading;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.url !== prevState.currentUrl) {
+      return { currentUrl: nextProps.currentUrl };
+    } else return null;
+  }
 
-    // Only report is changed - re-initialize
-    if (isReportChanged) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.url !== this.props.url) {
+      this.forceUpdate();
       this.initTableau();
     }
-
-    // Only filters are changed, apply via the API
-    if (!isReportChanged && isFiltersChanged && !isLoading) {
-      this.applyFilters(nextProps.filters);
-    }
-
-    // Only parameters are changed, apply via the API
-    if (!isReportChanged && isParametersChanged && !isLoading) {
-      this.applyParameters(nextProps.parameters);
-    }
-
-    // token change, validate it.
-    if (nextProps.token !== this.props.token) {
-      this.setState({ didInvalidateToken: false });
-    }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   const isReportChanged = nextProps.url !== this.props.url;
+  //   const isFiltersChanged = !shallowequal(this.props.filters, nextProps.filters, this.compareArrays);
+  //   const isParametersChanged = !shallowequal(this.props.parameters, nextProps.parameters);
+  //   const isLoading = this.state.loading;
+
+  //   // Only report is changed - re-initialize
+  //   if (isReportChanged) {
+  //     this.initTableau();
+  //   }
+
+  //   // Only filters are changed, apply via the API
+  //   if (!isReportChanged && isFiltersChanged && !isLoading) {
+  //     this.applyFilters(nextProps.filters);
+  //   }
+
+  //   // Only parameters are changed, apply via the API
+  //   if (!isReportChanged && isParametersChanged && !isLoading) {
+  //     this.applyParameters(nextProps.parameters);
+  //   }
+
+  //   // token change, validate it.
+  //   if (nextProps.token !== this.props.token) {
+  //     this.setState({ didInvalidateToken: false });
+  //   }
+  // }
 
   /**
    * Compares the values of filters to see if they are the same.
@@ -84,7 +97,7 @@ class TableauReport extends React.Component {
    * whether any throw an error.
    */
   onComplete(promises, cb) {
-    Promise.all(promises).then(() => cb(), () => cb())
+    Promise.all(promises).then(() => cb(), () => cb());
   }
 
   /**
@@ -100,7 +113,7 @@ class TableauReport extends React.Component {
       return tokenizeUrl(this.props.url, token) + query;
     }
 
-    return parsed.protocol + '//' + parsed.host + parsed.pathname + query;
+    return parsed.protocol + "//" + parsed.host + parsed.pathname + query;
   }
 
   invalidateToken() {
@@ -120,13 +133,8 @@ class TableauReport extends React.Component {
     this.setState({ loading: true });
 
     for (const key in filters) {
-      if (
-        !this.state.filters.hasOwnProperty(key) ||
-        !this.compareArrays(this.state.filters[key], filters[key])
-      ) {
-        promises.push(
-          this.sheet.applyFilterAsync(key, filters[key], REPLACE)
-        );
+      if (!this.state.filters.hasOwnProperty(key) || !this.compareArrays(this.state.filters[key], filters[key])) {
+        promises.push(this.sheet.applyFilterAsync(key, filters[key], REPLACE));
       }
     }
 
@@ -137,10 +145,7 @@ class TableauReport extends React.Component {
     const promises = [];
 
     for (const key in parameters) {
-      if (
-        !this.state.parameters.hasOwnProperty(key) ||
-        this.state.parameters[key] !== parameters[key]
-      ) {
+      if (!this.state.parameters.hasOwnProperty(key) || this.state.parameters[key] !== parameters[key]) {
         const val = parameters[key];
         // Ensure that parameters are applied only when we have a workbook
         if (this.workbook && this.workbook.changeParameterValueAsync) {
@@ -183,7 +188,7 @@ class TableauReport extends React.Component {
   }
 
   render() {
-    return <div ref={c => this.container = c} />;
+    return <div ref={c => (this.container = c)} />;
   }
 }
 
